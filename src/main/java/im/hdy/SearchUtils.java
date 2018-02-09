@@ -59,6 +59,64 @@ public class SearchUtils {
                 url = "http://i.qingting.fm/wapi/search";
                 body = RequestUtils.get(url, params, headers);
                 break;
+            case 3:
+                //lizhi
+                try {
+                    url = "http://m.lizhi.fm/api/search_audio/" + URLEncoder.encode(text, "utf8") + "/" + String.valueOf(page);
+                    headers.put("user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");
+                    body = RequestUtils.get(url, params, headers);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 4:
+                //migu
+                url = "http://m.10086.cn/migu/remoting/scr_search_tag";
+                params.put("keyword", text);
+                params.put("type", "2");
+                params.put("pgc", String.valueOf(page));
+                params.put("rows", String.valueOf(limit));
+                headers.put("referer", "http://m.10086.cn");
+                body = RequestUtils.get(url, params, headers);
+                break;
+            case 5:
+                //5singfc
+                url = "http://goapi.5sing.kugou.com/search/search";
+                headers.put("referer", "http://5sing.kugou.com/");
+                params.put("k", text);
+                params.put("t", "0");
+                params.put("filterType", "2");
+                params.put("pn", String.valueOf(page));
+                params.put("ps", String.valueOf(limit));
+                body = RequestUtils.get(url, params, headers);
+                break;
+            case 6:
+                //5singyc
+                url = "http://goapi.5sing.kugou.com/search/search";
+                headers.put("referer", "http://5sing.kugou.com/");
+                params.put("k", text);
+                params.put("t", "0");
+                params.put("filterType", "1");
+                params.put("pn", String.valueOf(page));
+                params.put("ps", String.valueOf(limit));
+                body = RequestUtils.get(url, params, headers);
+                break;
+            case 7:
+                //xiami
+                url = "http://api.xiami.com/web";
+                headers.put("referer", "http://m.xiami.com");
+                headers.put("user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");
+                try {
+                    params.put("key", URLEncoder.encode(text, "utf8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                params.put("app_key", "1");
+                params.put("r", "search/songs");
+                params.put("v", "2.0");
+                params.put("page", String.valueOf(page));
+                params.put("limit", String.valueOf(limit));
+                break;
             default:
                 break;
         }
