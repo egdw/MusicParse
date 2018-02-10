@@ -1,5 +1,6 @@
 package im.hdy;
 
+import im.hdy.utils.SearchUtils;
 import org.junit.Test;
 
 /**
@@ -9,7 +10,7 @@ public class SearchTest {
 
     @Test
     public void test() {
-        String search = SearchUtils.search(7, "鬼", 1, 10);
+        String search = SearchUtils.search(0, "鬼", 2, 10);
         System.out.println(search);
     }
 
