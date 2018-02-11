@@ -30,6 +30,9 @@ public class SearchUtils {
         ArrayList<Music> musics = new ArrayList<Music>();
         String url = null;
         String body = null;
+        JSONObject object = null;
+        JSONArray jsonArray = null;
+        Iterator<Object> iterator = null;
         switch (type) {
             case 0:
                 //喜马拉雅
@@ -40,9 +43,9 @@ public class SearchUtils {
                 params.put("is_paid", "false");
                 url = "http://search.ximalaya.com/front/v1";
                 body = RequestUtils.get(url, params);
-                JSONObject object = (JSONObject) JSON.parse(body);
-                JSONArray jsonArray = object.getJSONObject("track").getJSONArray("docs");
-                Iterator<Object> iterator = jsonArray.iterator();
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONObject("track").getJSONArray("docs");
+                iterator = jsonArray.iterator();
                 while (iterator.hasNext()) {
                     JSONObject next = (JSONObject) iterator.next();
                     String id = next.getString("id");
@@ -64,14 +67,27 @@ public class SearchUtils {
             case 1:
                 //kg
                 params.put("format", "json");
-                params.put("type", "get_ugc");
-                params.put("inCharset", "utf8");
-                params.put("outCharset", "utf-8");
-                params.put("share_uid", text);
-                params.put("start", String.valueOf(page));
-                params.put("num", String.valueOf(limit));
-                url = "http://kg.qq.com/cgi/kg_ugc_get_homepage";
+                params.put("keyword", text);
+                params.put("page", String.valueOf(page));
+                params.put("pagesize", String.valueOf(limit));
+                url = "http://mobilecdn.kugou.com/api/v3/search/song";
                 body = RequestUtils.get(url, params);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONObject("data").getJSONArray("info");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()){
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("singername"));
+                    //搜索的时候没有图片- -
+                    music.setPic(null);
+                    music.setSongid(next.getString("hash"));
+                    music.setTitle(next.getString("filename"));
+                    music.setType(0);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
+                System.out.println(musics);
                 break;
             case 2:
                 //qingting

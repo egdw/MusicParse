@@ -12,18 +12,19 @@ import java.util.HashMap;
  */
 public class MusicUtils {
 
-    public static String get(Integer type, String id) {
+    public static Music get(Integer type, String id) {
         HashMap<String, String> params = new HashMap<String, String>();
         HashMap<String, String> headers = new HashMap<String, String>();
         String url = null;
         String body = null;
+        Music music = null;
         switch (type) {
             case 0:
                 //喜马拉雅
                 url = "http://mobile.ximalaya.com/v1/track/ca/playpage/" + id;
                 headers.put("referer", "http://www.ximalaya.com");
                 body = RequestUtils.get(url, params, headers);
-                getXiMaLaYa(body);
+                music = getXiMaLaYa(body);
                 break;
             case 1:
                 //kg
@@ -124,9 +125,15 @@ public class MusicUtils {
             default:
                 break;
         }
-        return body;
+        return music;
     }
 
+    /**
+     * 解析喜马拉雅的json数据
+     *
+     * @param body json数据
+     * @return 解析完成的对象
+     */
     private static Music getXiMaLaYa(String body) {
         JSONObject parse = (JSONObject) JSON.parse(body);
         JSONObject object = parse.getJSONObject("trackInfo");
@@ -143,4 +150,7 @@ public class MusicUtils {
         music.setAuthor(author);
         return music;
     }
+
+//    private static Music get
+
 }
