@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import im.hdy.model.Music;
-import im.hdy.utils.RequestUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -75,7 +72,7 @@ public class SearchUtils {
                 object = (JSONObject) JSON.parse(body);
                 jsonArray = object.getJSONObject("data").getJSONArray("info");
                 iterator = jsonArray.iterator();
-                while (iterator.hasNext()){
+                while (iterator.hasNext()) {
                     JSONObject next = (JSONObject) iterator.next();
                     Music music = new Music();
                     music.setAuthor(next.getString("singername"));
@@ -83,7 +80,7 @@ public class SearchUtils {
                     music.setPic(null);
                     music.setSongid(next.getString("hash"));
                     music.setTitle(next.getString("filename"));
-                    music.setType(0);
+                    music.setType(1);
                     music.setUrl(null);
                     musics.add(music);
                 }
@@ -99,12 +96,52 @@ public class SearchUtils {
                 headers.put("referer", "http://www.qingting.fm");
                 url = "http://i.qingting.fm/wapi/search";
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                JSONObject o = (JSONObject) object.getJSONObject("data").getJSONArray("data").get(0);
+                jsonArray = o.getJSONObject("doclist").getJSONArray("docs");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("parent_name"));
+                    //搜索的时候没有图片- -
+                    music.setPic(next.getString("cover"));
+                    music.setSongid(next.getString("id"));
+                    music.setTitle(next.getString("title"));
+                    music.setType(2);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
+                System.out.println(musics);
                 break;
             case 3:
                 //lizhi
                 url = "http://m.lizhi.fm/api/search_audio/" + text + "/" + String.valueOf(page);
                 headers.put("user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONObject("audio").getJSONArray("data");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    next = next.getJSONObject("audio");
+                    Music music = new Music();
+                    //作者
+                    music.setAuthor(null);
+                    //搜索的时候没有图片- -
+                    //图片
+                    music.setPic(null);
+                    //id
+                    music.setSongid(next.getString("id"));
+                    //标题
+                    music.setTitle(next.getString("name"));
+                    //类型
+                    music.setType(3);
+                    //音乐地址
+                    music.setUrl(next.getString("fixedHighPlayUrl"));
+                    musics.add(music);
+                }
+                System.out.println(musics);
                 break;
             case 4:
                 //migu
@@ -115,7 +152,24 @@ public class SearchUtils {
                 params.put("rows", String.valueOf(limit));
                 headers.put("referer", "http://m.10086.cn");
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONArray("musics");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("singerName"));
+                    //搜索的时候没有图片- -
+                    music.setPic(next.getString("cover"));
+                    music.setSongid(next.getString("id"));
+                    music.setTitle(next.getString("title"));
+                    music.setLrc(next.getString("lyrics"));
+                    music.setType(4);
+                    music.setUrl(next.getString("mp3"));
+                    musics.add(music);
+                }
                 break;
+
             case 5:
                 //5singfc
                 url = "http://goapi.5sing.kugou.com/search/search";
@@ -126,6 +180,22 @@ public class SearchUtils {
                 params.put("pn", String.valueOf(page));
                 params.put("ps", String.valueOf(limit));
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONObject("data").getJSONArray("songArray");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("singer"));
+                    //搜索的时候没有图片- -
+                    music.setPic(null);
+                    music.setSongid(next.getString("songId"));
+                    music.setTitle(next.getString("songName"));
+                    music.setLrc(null);
+                    music.setType(5);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
                 break;
             case 6:
                 //5singyc
@@ -137,23 +207,51 @@ public class SearchUtils {
                 params.put("pn", String.valueOf(page));
                 params.put("ps", String.valueOf(limit));
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONObject("data").getJSONArray("songArray");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("singer"));
+                    //搜索的时候没有图片- -
+                    music.setPic(null);
+                    music.setSongid(next.getString("songId"));
+                    music.setTitle(next.getString("songName"));
+                    music.setLrc(null);
+                    music.setType(6);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
                 break;
             case 7:
                 //xiami
                 url = "http://api.xiami.com/web";
                 headers.put("referer", "http://m.xiami.com");
                 headers.put("user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");
-                try {
-                    params.put("key", URLEncoder.encode(text, "utf8"));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                params.put("key", text);
                 params.put("app_key", "1");
                 params.put("r", "search/songs");
                 params.put("v", "2.0");
                 params.put("page", String.valueOf(page));
                 params.put("limit", String.valueOf(limit));
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONObject("data").getJSONArray("songs");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("artist_name"));
+                    //搜索的时候没有图片- -
+                    music.setPic(next.getString("listen_file"));
+                    music.setSongid(next.getString("song_id"));
+                    music.setTitle(next.getString("song_name"));
+                    music.setLrc(next.getString("lyric"));
+                    music.setType(7);
+                    music.setUrl(next.getString("listen_file"));
+                    musics.add(music);
+                }
                 break;
             case 8:
                 //qq
@@ -164,6 +262,23 @@ public class SearchUtils {
                 params.put("n", String.valueOf(limit));
                 params.put("format", "json");
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONObject("data").getJSONObject("song").getJSONArray("list");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    JSONObject singer = (JSONObject) next.getJSONArray("singer").get(0);
+                    music.setAuthor(singer.getString("name"));
+                    //搜索的时候没有图片- -
+                    music.setPic(null);
+                    music.setSongid(next.getString("songid"));
+                    music.setTitle(next.getString("songname"));
+                    music.setLrc(next.getString("lyric"));
+                    music.setType(8);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
                 break;
             case 9:
                 //酷我
@@ -223,6 +338,7 @@ public class SearchUtils {
             default:
                 break;
         }
+        System.out.println(musics);
         return body;
     }
 }
