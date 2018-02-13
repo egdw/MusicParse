@@ -292,6 +292,22 @@ public class SearchUtils {
                 params.put("rformat", "json");
                 params.put("encoding", "utf8");
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONArray("abslist");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("ARTIST"));
+                    //搜索的时候没有图片- -
+                    music.setPic(null);
+                    music.setSongid(next.getString("MUSICRID"));
+                    music.setTitle(next.getString("SONGNAME"));
+                    music.setLrc(null);
+                    music.setType(9);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
                 break;
             case 10:
                 //酷狗
@@ -302,17 +318,49 @@ public class SearchUtils {
                 params.put("page", String.valueOf(page));
                 params.put("pagesize", String.valueOf(limit));
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONObject("data").getJSONArray("info");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("singername"));
+                    //搜索的时候没有图片- -
+                    music.setPic(null);
+                    music.setSongid(next.getString("hash"));
+                    music.setTitle(next.getString("songname"));
+                    music.setLrc(null);
+                    music.setType(10);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
                 break;
             case 11:
                 //百度
                 url = "http://musicapi.qianqian.com/v1/restserver/ting";
-                headers.put("method", "baidu.ting.search.common");
                 headers.put("referer", "http://music.baidu.com/");
+                params.put("method", "baidu.ting.search.common");
                 params.put("format", "json");
                 params.put("query", text);
                 params.put("page_no", String.valueOf(page));
                 params.put("page_size", String.valueOf(limit));
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONArray("song_list");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("author"));
+                    //搜索的时候没有图片- -
+                    music.setPic(null);
+                    music.setSongid(next.getString("song_id"));
+                    music.setTitle(next.getString("title"));
+                    music.setLrc("http://music.baidu.com" + next.getString("lrclink"));
+                    music.setType(11);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
                 break;
             case 12:
                 //1ting
@@ -322,6 +370,22 @@ public class SearchUtils {
                 params.put("page", String.valueOf(page));
                 params.put("size", String.valueOf(limit));
                 body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONArray("results");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("singer_name"));
+                    //搜索的时候没有图片- -
+                    music.setPic(next.getString("album_cover"));
+                    music.setSongid(next.getString("song_id"));
+                    music.setTitle(next.getString("song_name"));
+                    music.setLrc(null);
+                    music.setType(12);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
                 break;
             case 13:
                 //'netease',需要加密
