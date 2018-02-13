@@ -10,7 +10,7 @@ public class SearchTest {
 
     @Test
     public void test() {
-        String search = SearchUtils.search(12, "邓紫棋", 2, 10);
+        String search = SearchUtils.search(13, "邓紫棋", 1, 10);
         System.out.println(search);
     }
 

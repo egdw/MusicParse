@@ -389,15 +389,28 @@ public class SearchUtils {
                 break;
             case 13:
                 //'netease',需要加密
-                url = "http://music.163.com/api/linux/forward";
-                headers.put("referer", "http://music.163.com/");
-//                params.put("method","POST");
-                params.put("url", "http://music.163.com/api/cloudsearch/pc");
-                params.put("s", text);
-                params.put("type", String.valueOf(page + 1));
-                params.put("offset", String.valueOf(page * 10 - 10));
-                params.put("limit", String.valueOf(limit));
+                url = "http://music.163.com/api/search/pc?s=" + text + "&offset=" + String.valueOf(Math.abs(1 * page - 10)) + "&limit=" + String.valueOf(limit) + "&type=1";
+                headers.put("Cookie", "appver=1.5.0.75771");
+                headers.put("Referer", "http://music.163.com/");
                 body = RequestUtils.post(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONObject("resultF").getJSONArray("songs");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    JSONObject singer = (JSONObject) next.getJSONArray("artists").get(0);
+                    JSONObject album = next.getJSONObject("album");
+                    music.setAuthor(singer.getString("name"));
+                    //搜索的时候没有图片- -
+                    music.setPic(album.getString("picUrl"));
+                    music.setSongid(next.getString("id"));
+                    music.setTitle(next.getString("name"));
+                    music.setLrc(null);
+                    music.setType(13);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
                 break;
             default:
                 break;
