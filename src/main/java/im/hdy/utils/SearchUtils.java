@@ -106,7 +106,8 @@ public class SearchUtils {
                     music.setAuthor(next.getString("parent_name"));
                     //搜索的时候没有图片- -
                     music.setPic(next.getString("cover"));
-                    music.setSongid(next.getString("id"));
+                    String parent_id = next.getString("parent_id");
+                    music.setSongid(parent_id + " " + next.getString("id"));
                     music.setTitle(next.getString("title"));
                     music.setType(2);
                     music.setUrl(null);
@@ -171,33 +172,6 @@ public class SearchUtils {
                 break;
 
             case 5:
-                //5singfc
-                url = "http://goapi.5sing.kugou.com/search/search";
-                headers.put("referer", "http://5sing.kugou.com/");
-                params.put("k", text);
-                params.put("t", "0");
-                params.put("filterType", "2");
-                params.put("pn", String.valueOf(page));
-                params.put("ps", String.valueOf(limit));
-                body = RequestUtils.get(url, params, headers);
-                object = (JSONObject) JSON.parse(body);
-                jsonArray = object.getJSONObject("data").getJSONArray("songArray");
-                iterator = jsonArray.iterator();
-                while (iterator.hasNext()) {
-                    JSONObject next = (JSONObject) iterator.next();
-                    Music music = new Music();
-                    music.setAuthor(next.getString("singer"));
-                    //搜索的时候没有图片- -
-                    music.setPic(null);
-                    music.setSongid(next.getString("songId"));
-                    music.setTitle(next.getString("songName"));
-                    music.setLrc(null);
-                    music.setType(5);
-                    music.setUrl(null);
-                    musics.add(music);
-                }
-                break;
-            case 6:
                 //5singyc
                 url = "http://goapi.5sing.kugou.com/search/search";
                 headers.put("referer", "http://5sing.kugou.com/");
@@ -220,6 +194,33 @@ public class SearchUtils {
                     music.setTitle(next.getString("songName"));
                     music.setLrc(null);
                     music.setType(6);
+                    music.setUrl(null);
+                    musics.add(music);
+                }
+                break;
+            case 6:
+                //5singfc
+                url = "http://goapi.5sing.kugou.com/search/search";
+                headers.put("referer", "http://5sing.kugou.com/");
+                params.put("k", text);
+                params.put("t", "0");
+                params.put("filterType", "2");
+                params.put("pn", String.valueOf(page));
+                params.put("ps", String.valueOf(limit));
+                body = RequestUtils.get(url, params, headers);
+                object = (JSONObject) JSON.parse(body);
+                jsonArray = object.getJSONObject("data").getJSONArray("songArray");
+                iterator = jsonArray.iterator();
+                while (iterator.hasNext()) {
+                    JSONObject next = (JSONObject) iterator.next();
+                    Music music = new Music();
+                    music.setAuthor(next.getString("singer"));
+                    //搜索的时候没有图片- -
+                    music.setPic(null);
+                    music.setSongid(next.getString("songId"));
+                    music.setTitle(next.getString("songName"));
+                    music.setLrc(null);
+                    music.setType(5);
                     music.setUrl(null);
                     musics.add(music);
                 }
@@ -272,11 +273,12 @@ public class SearchUtils {
                     music.setAuthor(singer.getString("name"));
                     //搜索的时候没有图片- -
                     music.setPic(null);
-                    music.setSongid(next.getString("songid"));
+                    music.setSongid(next.getString("songmid"));
                     music.setTitle(next.getString("songname"));
                     music.setLrc(next.getString("lyric"));
                     music.setType(8);
-                    music.setUrl(null);
+                    //直接通过解析获取到下载链接
+                    music.setUrl(MusicUtils.qq(next.getString("songmid")));
                     musics.add(music);
                 }
                 break;
